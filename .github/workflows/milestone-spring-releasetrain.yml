@@ -2,7 +2,6 @@ name: Check Milestone
 on:
   milestone:
     types: [created, opened, edited]
-env:
   DUE_ON: ${{ github.event.milestone.due_on }}
   TITLE: ${{ github.event.milestone.title }}
 permissions:
@@ -10,10 +9,9 @@ permissions:
 jobs:
   spring-releasetrain-checks:    
     name: Check DueOn is on a Release Date
-    runs-on: ubuntu-latest
-    if: ${{ github.repository == 'spring-projects/spring-security' }}
-    permissions:
-      contents: none
+    runs-on: ubuntu-22.04
+  milestone:
+    types: [created, opened, edited]
     steps:
     - name: Print Milestone Being Checked
       run: echo "Validating DueOn '$DUE_ON' for milestone '$TITLE'"
@@ -27,10 +25,9 @@ jobs:
     name: Check for failures
     needs: [spring-releasetrain-checks]
     if: failure()
-    runs-on: ubuntu-latest
-    permissions:
-      actions: read
-    steps:
+    runs-on: ubuntu-22.04
+  milestone:
+    types: [created, opened, edited]
       - name: Send Slack message
         uses: Gamesight/slack-workflow-status@v1.0.1
         with:

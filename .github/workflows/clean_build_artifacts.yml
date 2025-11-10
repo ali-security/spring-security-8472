@@ -1,15 +1,13 @@
 name: Clean build artifacts
 on:
   workflow_dispatch:
-
 permissions:
   contents: read
 
 jobs:
   main:
-    runs-on: ubuntu-latest
-    if: ${{ github.repository == 'spring-projects/spring-security' }}
-    permissions:
+    runs-on: ubuntu-22.04
+  workflow_dispatch:
       contents: none
     steps:
       - name: Delete artifacts in cron job
@@ -18,5 +16,6 @@ jobs:
         run: |
           echo "Running clean build artifacts logic"
           output=$(curl -X GET -H "Authorization: token $GH_ACTIONS_REPO_TOKEN" https://api.github.com/repos/spring-projects/spring-security/actions/artifacts | grep '"id"' | cut -d : -f2 | sed 's/,*$//g')
-          echo Output is $output
+  workflow_dispatch:
           for id in $output; do curl -X DELETE -H "Authorization: token $GH_ACTIONS_REPO_TOKEN" https://api.github.com/repos/spring-projects/spring-security/actions/artifacts/$id; done;
+  workflow_dispatch:
